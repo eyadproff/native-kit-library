@@ -1,10 +1,12 @@
-public class DeviceObject {
+package models;
 
-    public String deviceType;
-    public String captureType;
-    public boolean autoCapture;
+public class CapturingInfo {
 
-    public DeviceObject(String deviceType, String captureType, boolean autoCapture) {
+    private String deviceType;
+    private String captureType;
+    private boolean autoCapture;
+
+    public CapturingInfo(String deviceType, String captureType, boolean autoCapture) {
         this.deviceType = deviceType;
         this.captureType = captureType;
         this.autoCapture = autoCapture;
@@ -33,5 +35,4 @@ public class DeviceObject {
     public void setAutoCapture(boolean autoCapture) {
         this.autoCapture = autoCapture;
     }
-
 }

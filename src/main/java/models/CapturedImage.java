@@ -1,3 +1,5 @@
+package models;
+
 public class CapturedImage {
 
     private String deviceName;

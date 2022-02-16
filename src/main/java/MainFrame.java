@@ -1,6 +1,8 @@
 import com.microsoft.signalr.HubConnection;
 import com.microsoft.signalr.HubConnectionBuilder;
 import com.microsoft.signalr.HubConnectionState;
+import models.CapturedImage;
+import models.CapturingInfo;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Base64;
 
 public class MainFrame extends JFrame {
