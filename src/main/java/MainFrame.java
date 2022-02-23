@@ -120,10 +120,16 @@ public class MainFrame extends JFrame {
                             buttonsPanel.setBackground(Color.GREEN);
                             buttonStartSignalRConnection.setEnabled(false);
                             buttonStopSignalRConnection.setEnabled(true);
+                            buttonStartCaptureInitCamera.setEnabled(true);
+                            buttonStopCaptureShutdownCamera.setEnabled(true);
+                            buttonCaptureImage.setEnabled(true);
                         } else {
                             buttonsPanel.setBackground(Color.ORANGE);
                             buttonStartSignalRConnection.setEnabled(true);
                             buttonStopSignalRConnection.setEnabled(false);
+                            buttonStartCaptureInitCamera.setEnabled(false);
+                            buttonStopCaptureShutdownCamera.setEnabled(false);
+                            buttonCaptureImage.setEnabled(false);
                         }
                         JOptionPane.showMessageDialog(mainFrameRef, "Connection state ::" + hubConnection.getConnectionState().toString() + "::");
                     }
@@ -193,6 +199,7 @@ public class MainFrame extends JFrame {
 
             });
         });
+        buttonStartCaptureInitCamera.setEnabled(false);
 
         buttonStopCaptureShutdownCamera = new JButton("(stopCapture) Stop Livestream");
         buttonStopCaptureShutdownCamera.addActionListener(e -> {
@@ -201,6 +208,7 @@ public class MainFrame extends JFrame {
                 hubConnection.send("stopCapturing");
             });
         });
+        buttonStopCaptureShutdownCamera.setEnabled(false);
 
         buttonResetForm = new JButton("Reset Form");
         buttonResetForm.setBackground(Color.pink);
@@ -230,6 +238,7 @@ public class MainFrame extends JFrame {
                 }
             });
         });
+        buttonCaptureImage.setEnabled(false);
 
         buttonClose = new JButton("Close");
         buttonClose.setBackground(Color.pink);
@@ -250,6 +259,7 @@ public class MainFrame extends JFrame {
         outputArea.setText("Ready..");
 //        JScrollPane scrollTextArea = new JScrollPane (outputArea,
 //                JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        outputArea.setEditable(false);
         statusOutputPanel.add(outputArea, BorderLayout.CENTER);
 
 
@@ -297,24 +307,26 @@ public class MainFrame extends JFrame {
 
     public static void stopConnection() {
         System.out.println(">>>>>>>>>>>>> in stopConnection");
-        try {
-            if (hubConnection != null) {
-                hubConnection.stop().doOnError((throwable) -> {
-                    throwable.printStackTrace();
-                });
+        SwingUtilities.invokeLater(() -> {
+            try {
+                if (hubConnection != null) {
+                    hubConnection.stop().doOnError((throwable) -> {
+                        throwable.printStackTrace();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, e.getMessage() != null ? e.getMessage() : "Error");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, e.getMessage() != null ? e.getMessage() : "Error");
-        }
-        try {
-            if (hubConnection != null) {
-                hubConnection.close();
+            try {
+                if (hubConnection != null) {
+                    hubConnection.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, e.getMessage() != null ? e.getMessage() : "Error");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, e.getMessage() != null ? e.getMessage() : "Error");
-        }
+        });
         System.out.println(">>>>>>>>>>>>> after stopConnection");
     }
 
@@ -330,6 +342,7 @@ public class MainFrame extends JFrame {
             }
 
             if (targetStream != null) {
+                // Make sure to register once per connection as multi listeners will consume memory and are useless.
                 hubConnection.on(targetStream, (sentCapImage) -> {
                     try {
                         SwingUtilities.invokeLater(() -> {
@@ -365,6 +378,7 @@ public class MainFrame extends JFrame {
             }
 
             if (targetStream != null) {
+                // Make sure to register once per connection as multi listeners will consume memory and are useless.
                 hubConnection.on(targetStream, (sentLiveFrameImage) -> {
                     try {
                         SwingUtilities.invokeLater(() -> {
